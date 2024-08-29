@@ -1,24 +1,28 @@
-```{r setup} 
+```{r setup}
+#install.packages("reticulate")
+
 library(reticulate)
 virtualenv_create("fmri-proj")
 py_install("seaborn", envname = "fmri-proj")
 use_virtualenv("fmri-proj")
+
+```
+
+```{r}
+library(reticulate)
+
+py_install("torch")
+py_install("numba")
+py_install("jit")
+py_install("cuda")
+py_config()
 ```
 
 ```{python setup}
 import numpy as np
 import torch
 import torch.nn as nn
-from numba import jit, cuda
-```
-
-```{r}
-library(reticulate)
-py_config()
-py_install("torch")
-py_install("numba")
-py_install("jit")
-py_install("cuda")
+#from numba import jit, cuda
 ```
 
 ```{python}
@@ -26,11 +30,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(torch.cuda.is_available())
 ```
 
-
 ```{r}
-
-library(reticulate)
-
 # Usa el entorno virtual correcto
 use_virtualenv("fmri-proj")
 
@@ -39,6 +39,14 @@ py_run_string("
 import subprocess
 subprocess.check_call(['pip', 'install', 'numpy==2.0.2'])
 ")
+```
+
+```{python}
+
+meta_data = r.metadata_MGYS00005592
 
 ```
 
+```{r}
+py_func(process_metadata())
+```
