@@ -11,10 +11,14 @@ use_virtualenv("fmri-proj")
 ```{r}
 library(reticulate)
 
-py_install("torch")
 py_install("numba")
 py_install("jit")
-py_install("cuda")
+py_install("joblib")
+py_install("pandas")
+py_install("requests")
+py_install("rpy2")
+
+#py_install("cuda")
 py_config()
 ```
 
@@ -22,7 +26,9 @@ py_config()
 import numpy as np
 import torch
 import torch.nn as nn
-#from numba import jit, cuda
+import rpy2
+from rpy2 import robjects
+from numba import jit, cuda
 ```
 
 ```{python}
@@ -44,9 +50,16 @@ subprocess.check_call(['pip', 'install', 'numpy==2.0.2'])
 ```{python}
 
 meta_data = r.metadata_MGYS00005592
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(torch.cuda.is_available())
 
 ```
 
-```{r}
-py_func(process_metadata())
+```{python}
+# Ejecutar código R
+robjects.r('''
+process_metadata <- function(){
+mae <- getResult(mgclnt, meta_dataframe$analysis_accession, usecache = TRUE)
+}
+''')
 ```
