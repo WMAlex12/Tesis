@@ -25,10 +25,15 @@ library(remotes)
 library(MGnifyR)
 library(phyloseq)
 library(assertive)
+library(parallel)
+###########################################################
+### Aprovechamiento de nucleos
 
-##########################################
-#Codigo recolectado del repositorio de GitHub de MGnify 
-
+num_cores <- detectCores()
+print(num_cores)
+Cluster <- makeCluster(num_cores)
+#registerDoParallel(Cluster)
+###########################################################
 # Set up the MGnify client instance
 mgclnt <- MgnifyClient(usecache = TRUE, cache_dir = '/tmp/MGnify_cache')
 
@@ -40,12 +45,24 @@ accession_list <- searchAnalysis(mgclnt, "studies", "MGYS00005592", usecache = T
 meta_dataframe <- getMetadata(mgclnt, accession_list, usecache = TRUE)
 saveRDS(meta_dataframe,"metadata_MGYS00005592.rds")
 
+class(metadata_MGYS00005592)
+metadata_matrix <- as.matrix(metadata_MGYS00005592)
+
+
 # Convert analyses outputs to a single `MultiAssayExperiment` object
-process_metadata <- function(mgclnt){
+process_metadata <- function(){
 mae <- getResult(mgclnt, meta_dataframe$analysis_accession, usecache = TRUE)
 mae
 }
 process_metadata()
+
+
+#### Procesamiento con todos los núcleos del CPU 
+mae <-  mclapply(process_metadata(), mc.cores = num_cores) 
+saveRDS(mae, "mae__MGYS00005592.rds") 
+
+stopCluster(Cluster)
+
 
 library(mia)
 
