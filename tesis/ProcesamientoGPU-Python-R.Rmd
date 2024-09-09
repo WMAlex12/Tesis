@@ -2,7 +2,7 @@
 #install.packages("reticulate")
 
 library(reticulate)
-env_path <- "GPU-Project"
+env_path <- "/home/wmalex/Documentos/Tesis/GPU-Project"
 virtualenv_create(envname = env_path)
 py_install("seaborn", envname = env_path)
 use_virtualenv(env_path)
@@ -43,8 +43,10 @@ print(torch.cuda.is_available())
 ```{python}
 
 meta_dataframe = r.meta_dataframe
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(torch.cuda.is_available())
+
+
+
+
 
 ```
 

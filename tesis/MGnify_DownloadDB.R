@@ -50,8 +50,10 @@ saveRDS(meta_dataframe,"metadata_MGYS00002401.rds")
 
 meta_dataframe <- metadata_MGYS00002401
 
+accession_list <- meta_dataframe$analysis_accession
+
 # Convert analyses outputs to a single `MultiAssayExperiment` object
-mae <- getResult(mgclnt, meta_dataframe$analysis_accession, usecache = TRUE)
+mae <- getResult(mgclnt, accession_list, usecache = TRUE)
 saveRDS(mae, "mae_MGYS00002401.rds") 
 mae
 
@@ -59,7 +61,16 @@ process_metadata()
 
 
 #### Procesamiento con todos los núcleos del CPU 
-mae <-  mclapply(process_metadata(), mc.cores = num_cores) 
+
+# Extraer las accesiones de análisis
+
+# Definir la función a aplicar
+getResultmae <- function(accession) {
+  getResult(mgclnt, accession, usecache = TRUE)
+}
+
+# Ejecutar mclapply con todos los núcleos disponibles
+mae <- mclapply(accession_list, getResultmae(accession_list), mc.cores = num_cores)
 
 stopCluster(Cluster)
 
