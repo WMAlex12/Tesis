@@ -42,31 +42,18 @@ mgclnt <- MgnifyClient(usecache = TRUE, cache_dir = '/tmp/MGnify_cache')
 
 
 # Retrieve the list of analyses associated with a study
-accession_list <- searchAnalysis(mgclnt, "studies", "MGYS00005592", usecache = TRUE)
+accession_list <- searchAnalysis(mgclnt, "studies", "MGYS00002401", usecache = TRUE)
 
 # Download all associated study/sample and analysis metadata
 meta_dataframe <- getMetadata(mgclnt, accession_list, usecache = TRUE)
-saveRDS(meta_dataframe,"metadata_MGYS00005592.rds")
+saveRDS(meta_dataframe,"metadata_MGYS00002401.rds")
 
-meta_dataframe <- metadata_MGYS00005592
+meta_dataframe <- metadata_MGYS00002401
 
 # Convert analyses outputs to a single `MultiAssayExperiment` object
-process_metadata <- function(){
-  # Set up the MGnify client instance
-  mgclnt <- MgnifyClient(usecache = TRUE, cache_dir = '/tmp/MGnify_cache')
-  
-  
-  # Retrieve the list of analyses associated with a study
-  accession_list <- searchAnalysis(mgclnt, "studies", "MGYS00005592", usecache = TRUE)
-  
-  # Download all associated study/sample and analysis metadata
-  meta_dataframe <- getMetadata(mgclnt, accession_list, usecache = TRUE)
-  
-  mae <- getResult(mgclnt, meta_dataframe$analysis_accession, usecache = TRUE)
-  saveRDS(mae, "mae__MGYS00005592.rds") 
-  
-}
-
+mae <- getResult(mgclnt, meta_dataframe$analysis_accession, usecache = TRUE)
+saveRDS(mae, "mae_MGYS00002401.rds") 
+mae
 
 process_metadata()
 

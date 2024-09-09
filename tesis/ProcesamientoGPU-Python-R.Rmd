@@ -2,7 +2,7 @@
 #install.packages("reticulate")
 
 library(reticulate)
-env_path <- "$HOME/home/wmalex/Documentos/Tesis/tesis/GPU-Project"
+env_path <- "GPU-Project"
 virtualenv_create(envname = env_path)
 py_install("seaborn", envname = env_path)
 use_virtualenv(env_path)
@@ -18,7 +18,7 @@ py_install("pandas")
 py_install("requests")
 py_install("torch")
 py_install("rpy2")
-
+py_install("anndata")
 #py_install("cuda")
 py_config()
 ```
@@ -30,7 +30,9 @@ import torch.nn as nn
 import rpy2
 from rpy2 import robjects
 from numba import jit, cuda
-
+import pandas as pd
+import anndata as ad
+import time 
 ```
 
 ```{python}
@@ -40,17 +42,26 @@ print(torch.cuda.is_available())
 
 ```{python}
 
-meta_dataframe = r.metadata_MGYS00005592
+meta_dataframe = r.meta_dataframe
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(torch.cuda.is_available())
 
 ```
 
 ```{python}
-
+@cuda.jit(device=True)
 #r.assign('meta_dataframe', meta_dataframe)
 # Ejecutar código R
+
+start_time = time.time()
 torch.tensor(robjects.r('''
 process_metadata()
 ''')).to(device) 
+end_time = time.time()
+
+
+elapsed_time = end_time - start_time
+
+print(f"Tiempo de ejecución: {elapsed_time} segundos")
+
 ```
