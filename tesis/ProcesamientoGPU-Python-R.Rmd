@@ -2,7 +2,7 @@
 #install.packages("reticulate")
 
 library(reticulate)
-env_path <- "/home/wmalex/Documentos/Tesis/GPU-Project"
+env_path <- "GPU-Project"
 virtualenv_create(envname = env_path)
 py_install("seaborn", envname = env_path)
 use_virtualenv(env_path)
