@@ -96,3 +96,38 @@ tse_sub
 ##  rowTree: 1 phylo tree(s) (19216 leaves)
 ##  colLinks: NULL
 ##  colTree: NULL
+
+checkTaxonomy(tse)
+##  [1] TRUE
+
+taxonomyRanks(tse)
+##  [1] "Kingdom" "Phylum"  "Class"   "Order"   "Family"  "Genus"   "Species"
+
+rowData(tse)[, taxonomyRanks(tse)]
+##  DataFrame with 19216 rows and 7 columns
+##             Kingdom        Phylum        Class        Order        Family
+##         <character>   <character>  <character>  <character>   <character>
+##  549322     Archaea Crenarchaeota Thermoprotei           NA            NA
+##  522457     Archaea Crenarchaeota Thermoprotei           NA            NA
+##  951        Archaea Crenarchaeota Thermoprotei Sulfolobales Sulfolobaceae
+##  244423     Archaea Crenarchaeota        Sd-NA           NA            NA
+##  586076     Archaea Crenarchaeota        Sd-NA           NA            NA
+##  ...            ...           ...          ...          ...           ...
+##  278222    Bacteria           SR1           NA           NA            NA
+##  463590    Bacteria           SR1           NA           NA            NA
+##  535321    Bacteria           SR1           NA           NA            NA
+##  200359    Bacteria           SR1           NA           NA            NA
+##  271582    Bacteria           SR1           NA           NA            NA
+##               Genus                Species
+##         <character>            <character>
+##  549322          NA                     NA
+##  522457          NA                     NA
+##  951     Sulfolobus Sulfolobusacidocalda..
+##  244423          NA                     NA
+##  586076          NA                     NA
+##  ...            ...                    ...
+##  278222          NA                     NA
+##  463590          NA                     NA
+##  535321          NA                     NA
+##  200359          NA                     NA
+##  271582          NA                     NA

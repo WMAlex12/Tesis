@@ -29,6 +29,7 @@ library(urltools)
 library(remotes) 
 library(MGnifyR) 
 library(phyloseq) 
+library(RDS)
 ############################Solucion error utf-8###############################
 
 # En caso de generar un Error: no encoding suplied default utf-8
@@ -45,8 +46,7 @@ library(phyloseq)
 
 ###############################################################################
 
-
-study <- "MGYS00005139"
+study <- read_file("/home/karelvazquez/Documents/WMAlex/Tesis/tesis/code/Codigo_ejecutable_sh/study.txt")
 study
 
 # Set up the MGnify client instance
@@ -55,21 +55,21 @@ mgclnt <- MgnifyClient(usecache = TRUE)
 
 # Retrieve the list of analyses associated with a study
 
-#accession_list <- searchAnalysis(mgclnt, "studies", study)
+accession_list <- searchAnalysis(mgclnt, "studies", study)
 
 # Download all associated study/sample and analysis metadata
 
-#meta_dataframe <- getMetadata(mgclnt, accession_list)
+meta_dataframe <- getMetadata(mgclnt, accession_list)
 
-#savePathMetadata <- paste("data/MgnifyDownloads/meta_data/meta_data_",study, ".RData", sep = "")
-#savePathMetadata
+savePathMetadata <- paste("~/Documents/WMAlex/Tesis/tesis/data/MgnifyDownloads/meta_data/meta_data_",study, ".RData", sep = "")
+savePathMetadata
 
-#save(meta_dataframe, file = savePathMetadata)
+save(meta_dataframe, file = savePathMetadata)
 
 # Convert analyses outputs to a single `MultiAssayExperiment` object
 
 mae <- getResult(mgclnt, meta_dataframe$analysis_accession, usecache = TRUE)
-savePathMae <- paste("data/MgnifyDownloads/mae_getresult/mae_",study, ".RData", sep = "")
+savePathMae <- paste("~/Documents/WMAlex/Tesis/tesis/data/MgnifyDownloads/mae_getresult/mae_",study, ".RData", sep = "")
 savePathMae
 save(mae, file = savePathMetadata)
 
