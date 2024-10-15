@@ -34,8 +34,8 @@ library(phyloseq)
 # En caso de generar un Error: no encoding suplied default utf-8
 # Realizar los siguientes cambios
 ## Recolectar la ubicacion del archivo .Rprofile 
-#file_path <- file.path(Sys.getenv("HOME"), ".Rprofile")
-#file_path
+file_path <- file.path(Sys.getenv("HOME"), ".Rprofile")
+file_path
 
 # Esta linea de codigo te va a abrir el archivo .Rprofile y te permitira editarlo
 #file.edit(file.path(file_path))
@@ -46,7 +46,7 @@ library(phyloseq)
 ###############################################################################
 
 
-study <- "MGYS00005139"
+study <- "MGYS00000747"
 study
 
 # Set up the MGnify client instance
@@ -55,23 +55,24 @@ mgclnt <- MgnifyClient(usecache = TRUE)
 
 # Retrieve the list of analyses associated with a study
 
-#accession_list <- searchAnalysis(mgclnt, "studies", study)
+accession_list <- searchAnalysis(mgclnt, "studies", study)
 
 # Download all associated study/sample and analysis metadata
 
-#meta_dataframe <- getMetadata(mgclnt, accession_list)
+meta_dataframe <- getMetadata(mgclnt, accession_list)
 
-#savePathMetadata <- paste("data/MgnifyDownloads/meta_data/meta_data_",study, ".RData", sep = "")
-#savePathMetadata
+savePathMetadata <- paste("data/MgnifyDownloads/meta_data/meta_data_",study, ".RData", sep = "")
+savePathMetadata
 
-#save(meta_dataframe, file = savePathMetadata)
+save(meta_dataframe, file = savePathMetadata)
 
 # Convert analyses outputs to a single `MultiAssayExperiment` object
 
 mae <- getResult(mgclnt, meta_dataframe$analysis_accession, usecache = TRUE)
 savePathMae <- paste("data/MgnifyDownloads/mae_getresult/mae_",study, ".RData", sep = "")
 savePathMae
-save(mae, file = savePathMetadata)
+save(mae, file = savePathMae)
 
+ 
 
 
