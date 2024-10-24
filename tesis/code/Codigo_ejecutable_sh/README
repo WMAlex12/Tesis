@@ -1,0 +1,18 @@
+############################################################################
+                              Recomendaciones 
+############################################################################
+
+1. Es necesario que primero abras el script de R, esto para poder hacer las 
+descargas de librerias por medio de Bioconductor. Principalmente para que al 
+ejecutar el sh, este no ejecute esta sección constantemente. 
+
+2. Una vez que se han descargado y cargado las librerias, trata de comentarlas 
+también. En lo personar, siento que es ideal tener pocos mensajes que no son 
+necesarios. 
+
+3. Si haces una modificación en el código, recuerda que la ejecución es en 
+cascada. Por lo que puede causar algunos problemas si no te das cuenta de 
+la modificación de los objetos sin la visualización del environtment. 
+
+4. IMPORTANTE, en el Script es necesario que cambies la ubicación donde 
+recolecta y almacena los datos descargados. 
