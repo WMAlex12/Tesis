@@ -1,5 +1,5 @@
 #!/bin/bash
-############### By: WMAlex12, AndresRJ #################### 
+############### By: WMAlex12#################### 
 # Este archivo ejecutable te permite realizar las descargas desde la base
 # de datos de MGnify, utilizando como indicador de selección el estudio
 # (studies).Se realizó un Script de R el cual permite hacer la descarga
