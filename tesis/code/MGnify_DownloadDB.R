@@ -46,7 +46,7 @@ file_path
 ###############################################################################
 
 
-study <- "MGYS00000747"
+study <- "MGYS000001787"
 study
 
 # Set up the MGnify client instance
@@ -64,7 +64,6 @@ meta_dataframe <- getMetadata(mgclnt, accession_list)
 savePathMetadata <- paste("data/MgnifyDownloads/meta_data/meta_data_",study, ".RData", sep = "")
 savePathMetadata
 
-save(meta_dataframe, file = savePathMetadata)
 
 # Convert analyses outputs to a single `MultiAssayExperiment` object
 
