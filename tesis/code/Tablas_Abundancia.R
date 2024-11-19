@@ -1,133 +1,5 @@
-
-###################################################### 
-library(mia)
-library(dplyr)
-library(knitr)
-library(kableExtra)
-library(readr)
-library(phyloseq)
-library(scater)
-library(SpiecEasi)
-library(SPRING)
-library(NetCoMi)
-library(igraph)
-library(ComplexHeatmap)
-library(circlize)
-library(RDS)
-library(metagMisc)
-################Cargar Paquetes#######################
-if (!requireNamespace("BiocManager", quietly=TRUE))
-  install.packages("BiocManager")
-BiocManager::install("ComplexHeatmap")
-
-BiocManager::install("limma")
-remotes::install_github("vmikk/metagMisc")
-############ Manipulación de datos ###################
-## Usando las funciones para acceder a la info. taxonomica ## 
-## Crea y almacena los datos del tipo MultiAssayExperiment a archivos tipo Phyloseq para su almacenamiento 
-## El almacenamiento para cada Phyloseq lo hace por la lista que se genera en el paso anterior
-## EStos valores siempre pueden cambiar
-
-mae_phyloseq <- makePhyloseqFromTreeSummarizedExperiment(mae_MGYS00005139[[1]]) 
-mae_phyloseq
-
-mae2_phyloseq <- makePhyloseqFromTreeSummarizedExperiment(mae_MGYS00005139[[2]])
-mae2_phyloseq
-
-mae3_phyloseq <- makePhyloseqFromTreeSummarizedExperiment(mae_MGYS00005139[[3]]) 
-mae3_phyloseq
-
-save(mae_phyloseq, mae2_phyloseq, mae3_phyloseq, file = "data/mae_phyloseq_proccess/mae_phyloseq_MGYS00005139.RData")
-
-rm(mae_phyloseq, mae2_phyloseq)
-##### Prepocesamiento de los datos para libreria y atmosfera mia ##### 
-## Convertir los archivos phyloseq a TreeSummarizedExperiment
-
-TSE_MGYS00005537_1 <- makeTreeSEFromPhyloseq(mae_phyloseq)
-TSE_MGYS00005537_1 
-
-TSE_MGYS00005537_2 <- makeTreeSEFromPhyloseq(mae2_phyloseq)
-TSE_MGYS00005537_2
-
-TSE_MGYS00005139_3 <- makeTreeSEFromPhyloseq(mae3_phyloseq)
-TSE_MGYS00005139_3
-
-save(TSE_MGYS00005139_1,TSE_MGYS00005537_2, file = "data/mae_TSE/TSE_MGYS00005537.RData")
-
-################ Data_Wrangling #############################
-## Comprobar si la información es utilizable 
-checkTaxonomy(TSE_MGYS00005139_1)
-
-## Devolver las columnas que contienen  la información taxonómica
-taxonomyRanks(TSE_MGYS00005139_1)
-
-## Esto nos permite identificar si s posible realizar subconjuntos de los datos
-rowData(TSE_MGYS00005139_1)[, taxonomyRanks(TSE_MGYS00005139_1)]$Phylum
-
-## Mostrar si hay Valores NA en la columna y contabilizar los NA
-## En este caso se hace para las columnas de Family y Genus
-all(!taxonomyRankEmpty(TSE_MGYS00005139_1, rank = "Phylum"))
-
-table(taxonomyRankEmpty(TSE_MGYS00005139_1, rank = "Phylum"))
-
-all(!taxonomyRankEmpty(TSE_MGYS00005139_1, rank = "Genus"))
-
-table(taxonomyRankEmpty(TSE_MGYS00005139_1, rank = "Genus"))
-
-## Crear sub conjuntos por caracateristica 
-# Selección de una flia completa de datos con sus respectivo identificador 
-# 
-FamilySubset <- rowData(TSE_MGYS00005139_1)$Family |> table() |> head() |> kable()
-FamilySubset
-
-
-convertToPhyloseq
-phyloseq_to_df()
-
-
-
-
-
-######################################################
-#### Tabla de abundancias por phylum####
-###
-counts_data <- assay(TSE_MGYS00005537_2)
-
-abundancia_resumen <- rowData(TSE_MGYS00005537_2)$Family %>%
-  as.data.frame() %>%
-  bind_cols(as.data.frame(counts_data)) %>%
-  mutate(total_abundancia = rowSums(across(starts_with("MGYA")), na.rm = TRUE)) %>%
-  ungroup()
-abundancia_resumen
-####### ESta tabla vamos a usar #########
-
-TSE_MGYS00005139_1 <- transformAssay(TSE_MGYS00005139_1, method = "relabundance")
-TSE_MGYS00005139_1 <- agglomerateByPrevalence(
-  TSE_MGYS00005139_1,
-  rank = "Phylum",
-  assay.type = "relabundance")
-saveRDS(TSE_MGYS00005139_1, "data/TabalaAbundancia/TSE_Abundancia_MGYS00005139_1.rds")
-
-TSE_MGYS00005139_2 <- transformAssay(TSE_MGYS00005139_2, method = "relabundance")
-TSE_MGYS00005139_2 <- agglomerateByPrevalence(
-  TSE_MGYS00005139_2,
-  rank = "Phylum",
-  assay.type = "relabundance")
-saveRDS(TSE_MGYS00005139_2, "data/TabalaAbundancia/TSE_Abundancia_MGYS00005139_2.rds")
-
-TSE_MGYS00005139_3 <- transformAssay(TSE_MGYS00005139_3, method = "relabundance")
-TSE_MGYS00005139_3 <- agglomerateByPrevalence(
-  TSE_MGYS00005139_3,
-  rank = "Phylum",
-  assay.type = "relabundance")
-saveRDS(TSE_MGYS00005139_3, "data/TabalaAbundancia/TSE_Abundancia_MGYS00005139_3.rds")
-
-
-TSE_MGYS00005139_1
-
-########### Reorganización de datos para trabajar con SpiecEasi ###############
 ##############################################################
-library(devtools)
+
 install_github("zdk123/SpiecEasi")
 
 # Other packages you need to install are
@@ -142,7 +14,23 @@ install.packages("network")
 install.packages("ggnetwork")
 install.packages("ggpubr")
 
+
 ##############################################################
+###################################################### 
+library(mia)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(readr)
+library(phyloseq)
+library(scater)
+library(SPRING)
+library(NetCoMi)
+library(igraph)
+library(ComplexHeatmap)
+library(circlize)
+library(RDS)
+library(metagMisc)
 library(microbiome) # data analysis and visualisation
 library(phyloseq) # also the basis of data object. Data analysis and visualisation
 library(RColorBrewer) # nice color options
@@ -154,43 +42,163 @@ library(intergraph)
 #devtools::install_github("briatte/ggnet")
 library(ggnet)
 library(igraph)
+library(devtools)
+
+################Cargar Paquetes#######################
+if (!requireNamespace("BiocManager", quietly=TRUE))
+  install.packages("BiocManager")
+BiocManager::install("ComplexHeatmap")
+
+BiocManager::install("limma")
+remotes::install_github("vmikk/metagMisc")
+############ Manipulación de datos ###################
+## Usando las funciones para acceder a la info. taxonomica ## 
+## Crea y almacena los datos del tipo MultiAssayExperiment a archivos tipo Phyloseq para su almacenamiento 
+## El almacenamiento para cada Phyloseq lo hace por la lista que se genera en el paso anterior
+## EStos valores siempre pueden cambiar
+
+study <- readline(prompt = "Introduce el estudio: ")
+PATH <- paste("~/Documents/WMAlex/Tesis/tesis/data/MgnifyDownloads/mae_getresult/mae_", 
+              study,".rds", sep =  "")
+
+assign("physeq",readRDS(PATH) )
 
 
-mae_phyloseq
+## Convertir los datos MAE a un phyloseq en caso de ser necesario 
 
-tax_table(mae_phyloseq)[, colnames(tax_table(mae_phyloseq))] <- gsub(tax_table(mae_phyloseq)[, colnames(tax_table(mae_phyloseq))], pattern = "[a-z]__", replacement = "")
+physeq_1 <- makePhyloseqFromTreeSummarizedExperiment(physeq[[1]]) 
+physeq_1
 
-tax_table(mae_phyloseq)[tax_table(mae_phyloseq)[, "Phylum"] == "", "Phylum"] <- "Unidentified"
+physeq_2 <- makePhyloseqFromTreeSummarizedExperiment(physeq[[2]])
+physeq_2
+
+physeq_3 <- makePhyloseqFromTreeSummarizedExperiment(physeq[[3]]) 
+physeq_3
+
+## Guarda los archivos en la carpeta data y especificamente a la de 
+save(physeq_1, physeq_2, physeq_3, file = paste("data/mae_phyloseq_proccess/phyloseq_", study,".RData", sep = ""))
+
+##### Prepocesamiento de los datos para libreria y atmosfera mia ##### 
+## Convertir los archivos phyloseq a TreeSummarizedExperiment
+
+TSE1 <- assign(paste("TSE_", study, "_1", sep = ""), makeTreeSEFromPhyloseq(physeq_1))
+
+TSE2 <- assign(paste("TSE_", study, "_2", sep = ""), makeTreeSEFromPhyloseq(physeq_2))
+
+TSE3 <- assign(paste("TSE_", study, "_3", sep = ""), makeTreeSEFromPhyloseq(physeq_2))
+
+
+save(TSE1 ,TSE2 ,TSE3 , file = paste("data/TSE/TSE_", study,".RData", sep = "") )
+
+################ Data_Wrangling #############################
+## Comprobar si la información es utilizable 
+checkTaxonomy(TSE1)
+
+checkTaxonomy(TSE2)
+
+checkTaxonomy(TSE3)
+
+######################################################
+####### Creación de tablas de abundancias #########
+#' 
+#' 
+#' 
+
+TSE_Abundance_1 <- transformAssay(TSE1, method = "relabundance")
+TSE_Abundance_1 <- agglomerateByPrevalence(
+  TSE_Abundance_1,
+  rank = "Class",
+  assay.type = "relabundance")
+
+TSE_Abundance_2 <- transformAssay(TSE2, method = "relabundance")
+TSE_Abundance_2 <- agglomerateByPrevalence(
+  TSE_Abundance_2,
+  rank = "Class",
+  assay.type = "relabundance")
+
+TSE_Abundance_3 <- transformAssay(TSE3, method = "relabundance")
+TSE_Abundance_3 <- agglomerateByPrevalence(
+  TSE_Abundance_3,
+  rank = "Class",
+  assay.type = "relabundance")
+
+save(TSE_Abundance_1, TSE_Abundance_2, TSE_Abundance_3, file = paste("data/TablaAbundancia/TSE_Abundance_", study,".RData", sep = "") )
+
+head(TSE_Abundance_1)
+
+########### Reorganización de datos para trabajar con SpiecEasi ###############
+
+tax_table(physeq_1)[, colnames(tax_table(physeq_1))] <- gsub(tax_table(physeq_1)[, colnames(tax_table(physeq_1))], pattern = "[a-z]__", replacement = "")
+
+tax_table(physeq_1)[tax_table(physeq_1)[, "Class"] == "", "Class"] <- "Unidentified"
 
 # save the pseq object
 
-saveRDS(mae_phyloseq, "./data/mae_phyloseq_proccess/mae_phyloseq_MGYS00005139.rds")
+save(physeq_1, file = paste("data/phyobjects/taxtable_phy_", study,".RData", sep = "") )
 
 # check for features of data  
-summarize_phyloseq(mae_phyloseq)
-summarize_phyloseq(ps.otu)
-
-
-
+summarize_phyloseq(physeq_1)
 
 ###############Preparando  datos para spiec Easi##########################
 ### Convert a TSE en un phyloseq 
-Phyloseq_MGYS00005139_1 <- makePhyloseqFromTreeSE(TSE_Abundancia_MGYS00005139_1)
+Phyloseq_Abundance_1 <- makePhyloseqFromTreeSE(TSE1)
+
+Phyloseq_Abundance_2 <- makePhyloseqFromTreeSE(TSE2)
+
+Phyloseq_Abundance_3 <- makePhyloseqFromTreeSE(TSE3)
 
 ### Convertir la tabla taxonomica a un dataframe 
-tax_MGYS00005139_1 <- as.data.frame(tax_table(Phyloseq_MGYS00005139_1)@.Data)
-
+tax_1 <- as.data.frame(tax_table(Phyloseq_Abundance_1)@.Data)
 
 ### Convertir la tabla OTU a un dataframe 
-OTU_MGYS00005139_1 <- t(otu_table(Phyloseq_MGYS00005139_1)@.Data)
-
+OTU_1 <- t(otu_table(Phyloseq_Abundance_1)@.Data)
+View(OTU_1)
+dim(OTU_1)
 # In practice, use more repetitions
 set.seed(1204)
 
-net.c_1 <- spiec.easi(OTU_MGYS00005139_1, method='mb', icov.select.params=list(rep.num=1)) # reps have to increases for real data
+netSE_1 <- spiec.easi(OTU_1, method='mb', icov.select.params=list(rep.num=999)) # reps have to increases for real data
 
-saveRDS(net.c_1, "Output/net.c_1.rds")
-
+save(netSE_1, "data/network_correlations/netSE_1_2.RData")
+######################################################################################
 #please use more numebr of rep.num (99 or 999) the paraemters 
 
 ## Create graph object and get edge values  
+class(netSE_1_2)
+
+n.c <- symBeta(getOptBeta(netSE_1_2))
+
+colnames(n.c) <- rownames(n.c) <- colnames(OTU_1)
+
+vsize <- log2(apply(OTU_1, 2, mean)) # add log abundance as properties of vertex/nodes.
+vsize
+
+
+net_graph_1 <- graph.adjacency(n.c, mode='undirected', add.rownames = TRUE, weighted = TRUE)
+net_graph_1 # we can see all the attributes and weights
+
+
+## Pone un 0.1 a todos los valores menores a 0 
+E(net_graph_1)$weight[E(net_graph_1)$weight <= 0] <- 0.1
+
+coords.fdr = layout.fruchterman.reingold(net_graph_1)
+
+E(net_graph_1)[weight > 0]$color<-"#321321AA" #now color the edges based on their values positive is steelblue
+E(net_graph_1)[weight < 0]$color<-"red"  #now color the edges based on their values
+
+plot(net_graph_1, layout=coords.fdr, vertex.size = 3, vertex.label.cex = 0.1)
+
+
+## Plot mejorado 
+library(ggraph)
+library(tidygraph)
+
+set_graph_style(plot_margin = margin(1,1,1,2))
+graph <- as_tbl_graph(net_graph_1)
+
+# Not specifying the layout - defaults to "auto"
+ggraph(graph, layout = coords.fdr, circular = T) + 
+  geom_edge_link(aes(colour = "sample")) + 
+  geom_node_point()
+
+
