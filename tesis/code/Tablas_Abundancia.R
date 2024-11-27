@@ -152,23 +152,24 @@ tax_1 <- as.data.frame(tax_table(Phyloseq_Abundance_1)@.Data)
 
 ### Convertir la tabla OTU a un dataframe 
 OTU_1 <- t(otu_table(Phyloseq_Abundance_1)@.Data)
-View(OTU_1)
+
 dim(OTU_1)
 # In practice, use more repetitions
 set.seed(1204)
 
 netSE_1 <- spiec.easi(OTU_1, method='mb', icov.select.params=list(rep.num=999)) # reps have to increases for real data
 
-save(netSE_1, "data/network_correlations/netSE_1_2.RData")
+
+save(netSE_1, file = paste("data/network_correlations/netSE_", study, ".RData" ,sep = ""))
 ######################################################################################
 #please use more numebr of rep.num (99 or 999) the paraemters 
 
 ## Create graph object and get edge values  
-class(netSE_1_2)
+class(netSE_1)
 
-n.c <- symBeta(getOptBeta(netSE_1_2))
+n.c <- symBeta(getOptBeta(netSE_1))
 
-colnames(n.c) <- rownames(n.c) <- colnames(OTU_1)
+colnames(n.c) <- rownames(n.c) <- colnames(t(OTU_1))
 
 vsize <- log2(apply(OTU_1, 2, mean)) # add log abundance as properties of vertex/nodes.
 vsize
@@ -188,7 +189,42 @@ E(net_graph_1)[weight < 0]$color<-"red"  #now color the edges based on their val
 
 plot(net_graph_1, layout=coords.fdr, vertex.size = 3, vertex.label.cex = 0.1)
 
+#
+net_graph_1 <- asNetwork(net_graph_1)
+network::set.edge.attribute(net_graph_1, "color", ifelse(net_graph_1 %e% "weight" > 0, "steelblue", "orange"))
 
+colnames(tax_table(Phyloseq_Abundance_1))
+
+summary(net_graph_1)
+
+phyla <- tax_table(Phyloseq_Abundance_1)[, "Family"]
+phyla <- as.character(phyla)
+
+net_graph_1 %v% "Family" <- phyla
+net_graph_1 %v% "nodesize" <- vsize
+
+mycolors <- scale_color_manual(values = rainbow(168))  # Usando una paleta rainbow para 62 colores
+
+# Alternativamente, si prefieres colores con buen contraste, puedes usar colores en el espacio HCL (hue, chroma, luminance)
+mycolors <- scale_color_manual(values = rainbow_hcl(168))
+
+p <- ggnet2(net_graph_1, node.color = "Family", 
+            label = F, node.size = "nodesize", 
+            label.size = 0.5, edge.color = "color") + 
+  guides(color = guide_legend(title = "Family"), size = "none") + mycolors
+
+p
+
+View(net_graph_1)
+# If net_graph_1 is an adjacency matrix
+net_graph_1 <- graph_from_adjacency_matrix(net_graph_1)
+
+# If net_graph_1 is an edge list (data frame or matrix)
+net_graph_1 <- graph_from_edgelist(net_graph_1)
+head(net_graph_1)
+fam_mb <- degree.distribution(net_graph_1)
+plot(0:(length(fam_mb)-1), fam_mb, ylim=c(0,.35), type='b', 
+     ylab="Frequency", xlab="Degree", main="Degree Distributions")
 ## Plot mejorado 
 library(ggraph)
 library(tidygraph)
