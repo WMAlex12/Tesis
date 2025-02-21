@@ -9,17 +9,17 @@ study <- readline(prompt = "Introduce el estudio: ")
 PATH <- paste("~/Documentos/Tesis/tesis/data/MgnifyDownloads/mae_getresult/mae_", 
               study,".rds", sep =  "")
 
-assign("physeq",readRDS(PATH) )
-
+assign("physeq",readRDS(PATH))
+physeq <- mae
 ## Convertir los datos MAE a un phyloseq en caso de ser necesario 
 
-physeq_1 <- makePhyloseqFromTreeSummarizedExperiment(physeq[[1]]) 
+physeq_1 <- convertToPhyloseq(physeq[[1]]) 
 physeq_1
 
-physeq_2 <- makePhyloseqFromTreeSummarizedExperiment(physeq[[2]])
+physeq_2 <- convertToPhyloseq(physeq[[2]])
 physeq_2
 
-physeq_3 <- makePhyloseqFromTreeSummarizedExperiment(physeq[[3]]) 
+physeq_3 <- convertToPhyloseq(physeq[[3]]) 
 physeq_3
 
 ## Guarda los archivos en la carpeta data y especificamente a la de 

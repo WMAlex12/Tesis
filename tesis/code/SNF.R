@@ -36,7 +36,7 @@ set.seed(1204)
 #' Calculamos la distancia entre los datos
 #' 
 
-dist1 <- as.matrix(dist(OTU_1))
+dist1 <- as.matrix(dist(t(OTU_1)))
 dist2 <- as.matrix(dist(OTU_2))
 
 #' 
@@ -44,7 +44,7 @@ dist2 <- as.matrix(dist(OTU_2))
 #' Los valores de K y sigma se colocan empiricamente 
 #'
   
-W1 <- affinityMatrix(dist1, K = 25, sigma = 0.75)
+W1 <- affinityMatrix(t(dist1), K = 6, sigma = 0.75)
 W2 <- affinityMatrix(dist2, K = 25, sigma = 0.75)
 
 #'
